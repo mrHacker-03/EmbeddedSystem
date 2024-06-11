@@ -1,0 +1,25 @@
+#include <msp430.h> 
+int pwmDirection = 1; 
+void main(void) 
+{ 
+ WDTCTL = WDTPW|WDTHOLD; // Stop WDT 
+ ADC10CTL0 = SREF_0 + ADC10SHT_2 + ADC10ON; 
+ ADC10CTL1 = INCH_3; // input A3 
+ ADC10AE0 |= 0x08; // PA.3 ADC option select 
+ P1DIR |= BIT6; // Green LED for output 
+ P1SEL |= BIT6; // Green LED Pulse width modulation 
+ TA0CCR0 = 1024; // PWM period 
+ TA0CCR1 = 1; // PWM duty cycle,on 1/1000 initially 
+ TA0CCTL1 = OUTMOD_7; // TA0CCR1 reset/set-high voltage 
+ // below count,low voltage when past 
+ TA0CTL = TASSEL_2 + MC_1 + TAIE +ID_3; 
+ // Timer A control set to SMCLK,1MHz 
+ // and count up mode MC_1 
+ _BIS_SR(LPM4_bits + GIE); 
+ while (1); // Enter Low power mode 0 
+ } 
+#pragma vector= TIMER0_A1_VECTOR // Watchdog Timer ISR 
+__interrupt void timer(void) 
+{ 
+ ADC10CTL0 |= ENC + ADC10SC; 
+ TA0CCR1 = ADD } 
