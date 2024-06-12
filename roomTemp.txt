@@ -1,29 +1,37 @@
-#include <msp430.h> 
-//#include<msp430g2231.h> void 
-tempInit() 
-{ 
- ADC10CTL0=SREF_1 + REFON + ADC10ON + ADC10SHT_3 ; 
-//1.5V ref,Ref on,64 clocks for sample 
- ADC10CTL1=INCH_10+ ADC10DIV_3; //temp sensor is at 10 and clock/4 
-} int 
-tempOut() { 
-int t=0; 
- __delay_cycles(1000); //wait 4 ref to settle 
- ADC10CTL0 |= ENC + ADC10SC; //enable conversion and start conversion while(ADC10CTL1 
-& BUSY); //wait..i am converting..pum..pum.. 
- t=ADC10MEM; //store val in t 
- ADC10CTL0&=~ENC; //disable adc conv return 
-(int) ((t * 27069L - 18169625L) >> 16); //convert and pass 
-} void main(void) 
-{ volatile int temp; 
-//initialise 
- WDTCTL = WDTPW + WDTHOLD; 
-//stop..bow..boww temp=0; 
-tempInit();//initialize 
-adc 
-while(1) 
- { 
- __delay_cycles(500); //wait and set break point temp=tempOut(); //read temp 
- __delay_cycles(500); //wait and set breakpoint 
- } 
+#include <msp430.h>
+// Function to initialize the temperature sensor ADC
+void tempInit()
+{
+ ADC10CTL0 = SREF_1 + REFON + ADC10ON + ADC10SHT_3;
+ // SREF_1: Select VREF+ and VSS as reference
+ // REFON: Turn on reference generator
+ // ADC10ON: Turn on ADC10
+ // ADC10SHT_3: 64 x ADC10CLKs sample-and-hold time
+ ADC10CTL1 = INCH_10 + ADC10DIV_3;
+ // INCH_10: Channel 10 (temperature sensor)
+ // ADC10DIV_3: ADC10 clock divider /4
+}
+// Function to read temperature from the sensor
+int tempOut()
+{
+ int t = 0;
+ __delay_cycles(1000); // Wait for reference to settle
+ ADC10CTL0 |= ENC + ADC10SC; // Enable and start convers
+ while (ADC10CTL1 & BUSY); // Wait for conversion to com
+ t = ADC10MEM; // Store the ADC value in t
+ ADC10CTL0 &= ~ENC; // Disable ADC conversion
+ return (int)((t * 27069L - 18169625L) >> 16); // Conve
+}
+void main(void)
+{
+MSP 430 6
+ volatile int temp; // Variable to store temperature rea
+ WDTCTL = WDTPW + WDTHOLD; // Stop watchdog timer
+ tempInit(); // Initialize ADC for temperature sensor
+ while (1)
+ {
+ __delay_cycles(500); // Wait and set a breakpoint 
+ temp = tempOut(); // Read temperature
+ __delay_cycles(500); // Wait and set a breakpoint 
+ }
 }
