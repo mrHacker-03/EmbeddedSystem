@@ -1,38 +1,50 @@
-//a)Code to turn the LED ON when the button is pressed and OFF when it is released. 
-#include<msp430.h> int main(void) 
-{ 
-WDTCTL = WDTPW | WDTHOLD; // Stop watchdog timer 
-P1DIR |= 0x40; // Set P1.6 to output direction 
-P1REN |= 0x08; P1OUT |= 
-0X08; while(1) { if 
-(!(P1IN & BIT3)) 
-{ // If button is open(P1.3 HIGH) 
-P1OUT = P1OUT | BIT6; // ... turn on LED 
-} // or P1OUT |= BIT0; else 
-{ 
-P1OUT = P1OUT & ~BIT6; // ... else turn it off. 
-// or P1OUT &= ~BIT0 
-} 
-}}
+#include <msp430.h>
+int main(void)
+{
+ WDTCTL = WDTPW | WDTHOLD; // Stop watchdog timer
+ 
+ P1DIR |= 0x40; // Set P1.6 to output direction
+ 
+ P1REN |= 0x08; // Enable pull-up/pull-down resistor on 
+ P1OUT |= 0x08; // Set pull-up resistor on P1.3 (P1.3 H
+ 
+ while(1)
+ {
+ if (!(P1IN & BIT3)) // If button is pressed (P1.3 i
+ {
+P1OUT |= BIT6; // Turn on LED at P1.6
+ }
+ else
+ {
+ P1OUT &= ~BIT6; // Turn off LED at P1.6
+ }
+ }
+}
 
-//b)Alter the code to turn the red LED ON when the button is pressed and the green LED ON 
-//when the button is release
-#include<msp430.h> voidmain(void) 
-{ 
-WDTCTL = WDTPW | WDTHOLD; // Stop watchdog timer 
-P1DIR |= 0x41; // Set P1.6 to output direction 
-P1REN |= 0x08; P1OUT |= 
-0X08; while(1) { if 
-((P1IN & BIT3)) 
-{ // If button is open(P1.3 HIGH) 
-P1OUT = P1OUT & ~BIT0; // ... else turn it off. 
- P1OUT = P1OUT | BIT6; // ... turn on LED 
+
+/*
+#include <msp430.h>
+void main(void)
+{
+ WDTCTL = WDTPW | WDTHOLD; // Stop watchdog timer
  
-} // or P1OUT |= BIT0; else 
-{ 
- P1OUT = P1OUT | BIT0; // ... turn on LED 
- P1OUT = P1OUT & ~BIT6; // ... else turn it off. 
+ P1DIR |= BIT0 | BIT6; // Set P1.0 and P1.6 to output di
  
+ P1REN |= BIT3; // Enable pull-up/pull-down resistor on 
+ P1OUT |= BIT3; // Set pull-up resistor on P1.3 (P1.3 H
  
-// or P1OUT &= ~BIT0 
-} }} 
+ while(1)
+ {
+ if (P1IN & BIT3) // If button is not pressed (P1.3 
+ {
+ P1OUT &= ~BIT0; // Turn off LED at P1.0
+ P1OUT |= BIT6; // Turn on LED at P1.6
+ }
+ else // If button is pressed (P1.3 is LOW)
+ {
+ P1OUT |= BIT0; // Turn on LED at P1.0
+ P1OUT &= ~BIT6; // Turn off LED at P1.6
+ }
+ }
+}
+*/
